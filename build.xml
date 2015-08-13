@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<project name="RentABike" default="compile" basedir=".">
+	<property name="src.dir" value="src"/>
+	<property name="test.dir" value="test"/>
+	<property name="war.dir" value="war"/>
+	<property name="class.dir" value="${war.dir}/classes"/>
+
+	<property name="test.class.dir" value="${test.dir}/classes"/>
+	<path id="bikestore.class.path">
+		<fileset dir="${spring.dir}/dist">
+			<include name="*.jar"/>
+		</fileset>
+		<pathelement location="${spring.dir}/lib/jakarta-commons/commons-logging.jar"/>
+		<pathelement location="${spring.dir}/lib/log4j/log4j-1.2.8.jar"/>
+		<pathelement location="${spring.dir}/lib/j2ee/servlet.jar"/>
+		<dirset dir="${basedir}"/>
+		<dirset dir="${class.dir}"/>
+	</path>
+	<path id="junit.class.path">
+		<path refid="bikestore.class.path"/>
+		<pathelement location="PATH_TO_JUNIT"/>
+	</path>
+	<target name="compile.test" depends="init" description="Compiles all unit test source">
+		<javac srcdir="${test.dir}" destdir="${test.class.dir}" classpathref="junit.class.path"/>
+	</target>
+	<target name="test" depends="compile.test, compile" description="Runs the unit tests">
+		<junit printsummary="withOutAndErr" haltonfailure="no" haltonerror="no" fork="yes">
+			<classpath refid="junit.class.path"/>
+			<formatter type="xml" userfile="true"/>
+			<batchtest todir="${test.dir}">
+				<fileset dir="${test.class.dir}">
+					<include name="*Test.*"/>
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+	<target name="init">
+		<mkdir dir="${class.dir}"/>
+	</target>
+
+	<target name="compile" depends="init" description="Compiles all source code">
+		<javac srcdir="${src.dir}" destdir="${class.dir}" />
+	</target>
+
+	<target name="clean" description="Erases contents of classes dir">
+		<delete dir="${class.dir}"/>
+	</target>
+	
+</project>
